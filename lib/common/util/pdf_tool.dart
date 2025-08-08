@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 /// PDF 工具
@@ -73,5 +75,71 @@ class PdfTool {
   static String _ext(String format) {
     final f = format.toLowerCase();
     return (f == 'jpg' || f == 'jpeg') ? 'jpg' : 'png';
+  }
+
+  ///合并[imagesPath]目录下的所有图片到[outputPdfPath]的pdf文件
+  /// 参数：
+  /// - [imagesPath]: 图片目录路径。
+  /// - [pdfPath]: 输出的 PDF 文件路径。
+  ///返回：生成的PDF文件路径
+  static Future<void> mergeImageToPdf({
+    required String imagesPath,
+    required String pdfPath,
+  }) async {
+    final dir = Directory(imagesPath);
+    if (!await dir.exists()) {
+      throw FileSystemException('图片目录不存在', imagesPath);
+    }
+
+    // 支持的图片扩展名
+    final exts = <String>{'.png', '.jpg', '.jpeg', '.webp', '.bmp'};
+    final files = await dir
+        .list()
+        .where((e) => e is File)
+        .cast<File>()
+        .where((f) => exts.contains(p.extension(f.path).toLowerCase()))
+        .toList();
+
+    if (files.isEmpty) {
+      throw StateError('目录中未找到可用的图片文件');
+    }
+
+    final doc = pw.Document();
+    int addedPages = 0;
+
+    for (final file in files) {
+      final bytes = await file.readAsBytes();
+      final decoded = img.decodeImage(bytes);
+      if (decoded == null) {
+        // 跳过无法解析的图片
+        continue;
+      }
+
+      final isPortrait = decoded.height >= decoded.width;
+      final format = isPortrait ? PdfPageFormat.a4 : PdfPageFormat.a4.landscape;
+
+      doc.addPage(
+        pw.Page(
+          pageFormat: format,
+          margin: pw.EdgeInsets.zero,
+          build: (context) => pw.Center(
+            child: pw.Image(
+              pw.MemoryImage(bytes),
+              fit: pw.BoxFit.contain, // 保持比例完整展示
+            ),
+          ),
+        ),
+      );
+      addedPages++;
+    }
+
+    // 确保输出目录存在
+    final outFile = File(pdfPath);
+    await outFile.parent.create(recursive: true);
+    if (addedPages == 0) {
+      throw StateError('没有可用的图片生成 PDF');
+    }
+    final data = await doc.save();
+    await outFile.writeAsBytes(data);
   }
 }

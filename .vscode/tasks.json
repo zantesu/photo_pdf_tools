@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Flutter pub get and analyze",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"flutter --version >/dev/null 2>&1 || (echo 'Flutter not found, skipping build.' && exit 0); flutter pub get && dart analyze --no-fatal-infos --no-fatal-warnings"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
