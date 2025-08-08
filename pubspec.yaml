@@ -34,7 +34,6 @@ flutter:
   uses-material-design: true
 
 flutter_launcher_icons:
-  android: launcher_icon
   image_path: images/logo.png
   macos:
     generate: true
