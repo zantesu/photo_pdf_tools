@@ -1,0 +1,31 @@
+name: photo_pdf_tools
+description: "图片工具箱"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  chinese_font_library: ^1.2.0
+  file_selector: ^1.0.3
+  oktoast: ^3.4.0
+  path_provider: ^2.1.5
+  provider: ^6.1.5
+  window_manager: ^0.5.1
+  flutter_launcher_icons: ^0.14.4
+  intl: ^0.20.2
+  pdf: ^3.11.3
+  image: ^4.5.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  assets:
+    - images/
+  uses-material-design: true
