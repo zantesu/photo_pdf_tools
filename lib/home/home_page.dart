@@ -13,10 +13,16 @@ class HomePage extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(child: Image.asset('images/301.png')),
             SliverGrid.count(
-              crossAxisCount: 3,
+              childAspectRatio: 4,
+              crossAxisCount: 2,
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
-              children: [HomeCell(), HomeCell(), HomeCell()],
+              children: [
+                HomeCell(title: '成品检查'),
+                HomeCell(title: '图片尺寸统计'),
+                HomeCell(title: '图片合并pdf'),
+                HomeCell(title: 'pdf图片提取'),
+              ],
             ),
           ],
         ),
